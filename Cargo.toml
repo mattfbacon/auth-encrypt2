@@ -16,3 +16,7 @@ pbkdf2 = "0.12"
 sha2 = "0.10"
 tokio = { version = "1", features = ["rt", "macros", "net", "fs"] }
 tokio-util = { version = "0.7", features = ["io"] }
+
+[profile.release]
+lto = "thin"
+strip = true
