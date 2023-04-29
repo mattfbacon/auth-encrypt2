@@ -1,15 +1,13 @@
-use std::io::{self};
+use std::io;
 use std::pin::Pin;
 use std::task::{ready, Context, Poll};
 
 use bytes::Bytes;
 use chacha20::cipher::{KeyIvInit as _, StreamCipher as _, StreamCipherSeekCore as _};
 use chacha20::{ChaCha20, ChaChaCore};
-use futures_core::Stream;
 use hmac::Hmac;
 use sha2::Sha256;
 use tokio::io::{AsyncRead, AsyncReadExt as _, ReadBuf};
-use tokio_util::io::ReaderStream;
 
 struct CipherWrapper<S> {
 	cipher: ChaCha20,
@@ -32,9 +30,9 @@ impl<S: AsyncRead + Unpin> AsyncRead for CipherWrapper<S> {
 }
 
 pub async fn decrypt(
-	mut file: impl tokio::io::AsyncBufRead + Unpin,
+	mut file: impl AsyncRead + Unpin,
 	password: Bytes,
-) -> io::Result<impl Stream<Item = io::Result<Bytes>>> {
+) -> io::Result<impl AsyncRead + Unpin> {
 	const MAGIC_LENGTH: usize = 8;
 	const MAGIC: &[u8; MAGIC_LENGTH] = b"Salted__";
 	const SALT_LENGTH: usize = 8;
@@ -67,8 +65,8 @@ pub async fn decrypt(
 	core.set_block_pos(counter);
 	let cipher = ChaCha20::from_core(core);
 
-	Ok(ReaderStream::new(CipherWrapper {
+	Ok(CipherWrapper {
 		cipher,
 		inner: file,
-	}))
+	})
 }

@@ -6,6 +6,7 @@ use bytes::Bytes;
 use http::header::{AUTHORIZATION, WWW_AUTHENTICATE};
 use http::{HeaderValue, StatusCode};
 use hyper::{Body, Request, Response};
+use tokio_util::io::ReaderStream;
 
 use crate::decrypt::decrypt;
 
@@ -42,6 +43,7 @@ async fn handler_inner(req: Request<Body>) -> Result<Body, StatusCode> {
 
 	decrypt(file, Bytes::copy_from_slice(auth))
 		.await
+		.map(ReaderStream::new)
 		.map(Body::wrap_stream)
 		.map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
