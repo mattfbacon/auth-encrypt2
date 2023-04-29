@@ -3,6 +3,24 @@
 version = 3
 
 [[package]]
+name = "auth-encrypt"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "chacha20",
+ "futures-core",
+ "hmac",
+ "http",
+ "http-body",
+ "hyper",
+ "pbkdf2",
+ "rand",
+ "sha2",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -416,24 +434,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "template"
-version = "0.1.0"
-dependencies = [
- "bytes",
- "chacha20",
- "futures-core",
- "hmac",
- "http",
- "http-body",
- "hyper",
- "pbkdf2",
- "rand",
- "sha2",
- "tokio",
- "tokio-util",
 ]
 
 [[package]]
